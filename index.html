@@ -3,39 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leto 2026 Dovca</title>
+    <title>Leto 2026 Dovca - Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; background-color: #f4f9f4; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px; }
-        h2 { color: #27ae60; }
-        .destination { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .budget { font-weight: bold; color: #e67e22; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 20px; background-color: #f0f4f0; color: #333; }
+        header { text-align: center; padding: 40px 0; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 2.5em; }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        #map { height: 450px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); grid-column: 1 / -1; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        h2 { color: #27ae60; margin-top: 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+        .budget-badge { background: #e67e22; color: white; padding: 10px 20px; border-radius: 25px; font-weight: bold; display: inline-block; margin-top: 20px; }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <h1>☀️ Family Road Trip: Leto 2026</h1>
-    <p>Bratislava → Lake Como → Lake Garda → French Riviera → Switzerland</p>
-    
-    <div class="destination">
-        <h2>🇮🇹 Lake Como & Lugano</h2>
-        <p>Days 1-4: Varenna base. Day trip to Lugano, Switzerland. Ferry trips and lakeside strolls.</p>
+    <header>
+        <h1>☀️ Leto 2026: Family Road Trip</h1>
+        <p>Bratislava → Alps → Riviera → Switzerland</p>
+    </header>
+
+    <div id="map"></div>
+
+    <div class="container" style="margin-top: 20px;">
+        <div class="card">
+            <h2>🇮🇹 Lake Como & Lugano</h2>
+            <p><strong>Base:</strong> Varenna (3 nights). Day trip to Lugano, Switzerland. Visit Villa Balbianello and Bellagio via ferry.</p>
+        </div>
+        <div class="card">
+            <h2>🇮🇹 Lake Garda</h2>
+            <p><strong>Base:</strong> Sirmione area (4 nights). Beaches, Gardaland, and a side trip to romantic Verona.</p>
+        </div>
+        <div class="card">
+            <h2>🇫🇷 French Riviera</h2>
+            <p><strong>Base:</strong> Nice (4 nights). Explore Monaco, Menton's sandy beaches, and the Promenade des Anglais.</p>
+        </div>
+        <div class="card">
+            <h2>🇨🇭 Swiss Alps Return</h2>
+            <p><strong>Stopover:</strong> Lucerne (1 night). Final lake views and mountain scenery before driving home.</p>
+        </div>
     </div>
 
-    <div class="destination">
-        <h2>🇮🇹 Lake Garda</h2>
-        <p>Days 5-8: Sirmione base. Beaches, Verona day trip, and Gardaland.</p>
+    <div style="text-align: center;">
+        <div class="budget-badge">Target Budget: &lt; 2000€ (Travel & Stay)</div>
     </div>
 
-    <div class="destination">
-        <h2>🇫🇷 French Riviera</h2>
-        <p>Days 9-13: Nice base. Monaco, Menton beaches, and Promenade des Anglais.</p>
-    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([45.8, 12.0], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-    <div class="destination">
-        <h2>🇨🇭 Switzerland Return</h2>
-        <p>Day 14: Lucerne stopover. Chapel Bridge and Alpine views on the way home.</p>
-    </div>
+        var points = [
+            { name: "Bratislava (Start)", coords: [48.1486, 17.1077] },
+            { name: "Lake Como & Lugano", coords: [45.9, 9.2] },
+            { name: "Lake Garda", coords: [45.5, 10.6] },
+            { name: "French Riviera (Nice)", coords: [43.7, 7.2] },
+            { name: "Lucerne, Switzerland", coords: [47.05, 8.3] }
+        ];
 
-    <p class="budget">Target Budget: &lt; 2000€ (excluding car/fuel)</p>
+        var latlngs = points.map(p => p.coords);
+        var polyline = L.polyline(latlngs, {color: '#27ae60', weight: 4, dashArray: '10, 10'}).addTo(map);
+
+        points.forEach(p => {
+            L.marker(p.coords).addTo(map).bindPopup(p.name);
+        });
+
+        map.fitBounds(polyline.getBounds(), {padding: [30, 30]});
+    </script>
 </body>
 </html>
